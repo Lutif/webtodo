@@ -1,0 +1,23 @@
+<%- include("header") -%>
+        <div class="box " id= 'heading'><h1 > EasyTodo</h1>
+            <p class='intro'> Simple , Elegent , easy to use and effiecient </p>
+            <h4><%=day%></h4>
+        </div>
+        
+        <div class="box">
+                <% for (var i=0; i< list.length; i++) { %>
+
+        <div class="item">
+        <input type="checkbox" name="" id="">
+
+        <p ><%= list[i] %></p >
+         </div>
+         <% } %>
+         <form class='item' action="/" method="post">
+            <input placeholder="enter todo here" type="text" name='todoItem' autofocus autocomplete="off">
+            <button type="submit" name='button' value=<%=day%> </button>+</button>
+            </form>
+    
+        </div>
+<%- include('footer')-%>
+
