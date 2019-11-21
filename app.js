@@ -6,6 +6,8 @@ const mongoose =require ('mongoose');
 //database area
 // Connection URL and creating db if doesnt exist
 var db = mongoose.connect('mongodb+srv://admin-lutif:Test-123@cluster0-wi3xo.mongodb.net/tododb', {useNewUrlParser: true, useUnifiedTopology: true } );
+var port = process.env.PORT || 3000;
+
 
 //Creating Schema
 const todoSchema = new mongoose.Schema({
@@ -138,7 +140,7 @@ app.post('/:customListName',function(req,res){
 
 
 
-app.listen(3000, function(){
+app.listen(port, function(){
     console.log('Server started at 3000');
 })
 
