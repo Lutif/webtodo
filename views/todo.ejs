@@ -6,12 +6,14 @@
         
         <div class="box">
                 <form action="/delete" method="post">
-                <% list.forEach(function(item){%>
+                <% list.forEach(function(item){ %>
                 <div class="item">
-                <input type="checkbox" name ='id' value="<%= item._id %>" id="" onChange="this.form.submit()"
+                <input type="checkbox" name ='id' value="<%= item._id %>" id="" onChange="this.form.submit()">
                 <p ><%= item.text %></p >
-                </div>
-                <% }) %>
+                        </div>
+                        <% }) %>
+                        <input type="hidden" name="listName" value="<%=day%>"> </input>
+
                 </form>
          <form class='item' action=<%= '/'+day%> method="post">
             <input placeholder="enter todo here" type="text" name='todoItem' autofocus autocomplete="off">

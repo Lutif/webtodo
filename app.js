@@ -5,7 +5,7 @@ const mongoose =require ('mongoose');
 
 //database area
 // Connection URL and creating db if doesnt exist
-var db = mongoose.connect('mongodb://localhost:27017/tododb', {useNewUrlParser: true, useUnifiedTopology: true } );
+var db = mongoose.connect('mongodb+srv://admin-lutif:Test-123@cluster0-wi3xo.mongodb.net/tododb', {useNewUrlParser: true, useUnifiedTopology: true } );
 
 //Creating Schema
 const todoSchema = new mongoose.Schema({
@@ -59,7 +59,7 @@ app.get('/', function(req, res){
             });
             
         }
-        res.render('todo',{day:today, list:doc});
+        res.render('todo',{day:' ', list:doc});
     })
 
 
@@ -100,14 +100,33 @@ app.get('/:customListName', function(req,res){
     })
 });
 
+app.post('/delete',function(req,res){
+    console.log("deleting "+req.body.id);
+    let id=req.body.id;
+    let listName= req.body.listName;
+    console.log(listName);
+    if (listName==''){Todo.deleteOne({_id : id},function(err){
+        if (err){
+            console.log(err);
+        }
+    })
+    res.redirect('/');}
+    else
+    {
+        List.findOneAndUpdate({name: listName} , {$pull: {item:{_id:id}}} ,function(err,list){
+            if(!err){
+                res.redirect('/'+listName);
+            }
+        })
+    };
+    
+});
 app.post('/:customListName',function(req,res){
     const customListName =req.params.customListName;
     let todo=req.body.todoItem;
     const item = new Todo({text:todo});
     List.findOne({name: customListName},function (err, list) {
         newItems=list.item.push(item);
-        // console.log(newItaem);
-        // list.item=newItems;
         list.save()
         res.redirect('/'+customListName);
 
@@ -116,16 +135,7 @@ app.post('/:customListName',function(req,res){
 })
 
 
-app.post('/delete',function(req,res){
-    console.log("deleting "+req.body.id);
-    let id=req.body.id;
-    Todo.deleteOne({_id : id},function(err){
-        if (err){
-            console.log(err);
-        }
-    })
-    res.redirect('/');
-});
+
 
 
 app.listen(3000, function(){
