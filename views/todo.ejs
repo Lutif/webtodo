@@ -5,14 +5,14 @@
         </div>
         
         <div class="box">
-                <% for (var i=0; i< list.length; i++) { %>
-
-        <div class="item">
-        <input type="checkbox" name="" id="">
-
-        <p ><%= list[i] %></p >
-         </div>
-         <% } %>
+                <form action="/delete" method="post">
+                <% list.forEach(function(item){%>
+                <div class="item">
+                <input type="checkbox" name ='id' value="<%= item._id %>" id="" onChange="this.form.submit()"
+                <p ><%= item.text %></p >
+                </div>
+                <% }) %>
+                </form>
          <form class='item' action="/" method="post">
             <input placeholder="enter todo here" type="text" name='todoItem' autofocus autocomplete="off">
             <button type="submit" name='button' value=<%=day%> </button>+</button>

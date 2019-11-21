@@ -1,21 +1,33 @@
 const express= require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const mongoose =require ('mongoose');
 
-let todoList=[];
-let workTodo=[];
+//database area
+// Connection URL and creating db if doesnt exist
+var db = mongoose.connect('mongodb://localhost:27017/tododb', {useNewUrlParser: true, useUnifiedTopology: true } );
+
+//Creating Schema
+const todoSchema = new mongoose.Schema({
+    text: String,
+});
 
 
+//Creating model on based of schema ... ie creating collection
+const Todo = new mongoose.model('todo', todoSchema);
+//end database area
+
+//creating app
 const app = express();
 
-app.use(express.static('public'));
+
+app.use(express.static('public')); //defining folder for static files
 app.set('view engine','ejs'); //setting viewing engine as ejs for templeting and rendering
 
-app.use(bodyParser.urlencoded({extended : true }));
-//so we can parse data from request body 
+app.use(bodyParser.urlencoded({extended : true }));//so we can parse data from request body 
 
 
-app.get('/', function(req, res){
+app.get('/', function(req, res){  
     var d= new Date();
     var options={
         weekday:'long',
@@ -23,12 +35,16 @@ app.get('/', function(req, res){
         day:'numeric'
     };
     today=d.toLocaleDateString('en-eu',options);
-    res.render('todo',{day:today, list:todoList});
+    
+    Todo.find({},function (err,doc) {
+        
+        res.render('todo',{day:today, list:doc});
+    })
 
 
 });
 
-app.post('/', function (req, res) {
+app.post('/', function (req, res) { 
     todo=req.body.todoItem;
     if (req.body.button === 'Work'){
         console.log(req.body);
@@ -38,27 +54,35 @@ app.post('/', function (req, res) {
     
     else {
     
-    todoList.push(todo);
+    const item = new Todo({text:todo});
+    item.save()
     res.redirect('/');}
     // res.render('allday', {list:todoList});
 });
 
-app.get('/work', function(req,res){
-    res.render('todo',{day:'Work',list:workTodo});
+app.get('/:listName', function(req,res){
+    name=req.params.listName;
+    const newList = new mongoose.model(name,todoSchema);
+    console.log(newList);
+        
+    res.render('todo',{day:name,list: name});
 });
 
-// app.post('/work', function (req,res) {
-    
-//     item=req.body.todoItem;
-//     workTodo.push(item);
-//     console.log('back to work');
-//     res.redirect('/work');
-// })
+
+app.post('/delete',function(req,res){
+    console.log("deleting "+req.body.id);
+    let id=req.body.id;
+    Todo.deleteOne({_id : id},function(err){
+        if (err){
+            console.log(err);
+        }
+    })
+    res.redirect('/');
+});
 
 app.get('/about',function(req,res){
     res.render('about');
 })
-
 
 app.listen(3000, function(){
     console.log('Server started at 3000');
